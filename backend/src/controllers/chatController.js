@@ -3,23 +3,27 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY
-});
+// Helper para inicialización perezosa (lazy)
+const getGroqClient = () => {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+        console.warn("GROQ_API_KEY is missing. AI features will not work.");
+        return null; // O lanzar error controlado
+    }
+    return new Groq({ apiKey });
+};
 
 // Cache simple para evitar muchas llamadas en fetchHook repetidos
 let cachedHook = null;
 let lastHookTime = 0;
 
 export const getHook = async (req, res) => {
-    // Si hay un hook reciente (menos de 5 min), úsalo
-    /*
-    if (cachedHook && (Date.now() - lastHookTime < 1000 * 60 * 5)) {
-        return res.json({ hook: cachedHook });
-    }
-    */
-
     try {
+        const groq = getGroqClient();
+        if (!groq) {
+            return res.json({ hook: "¿Sabías que configurar las variables de entorno ahorra dolores de cabeza?" });
+        }
+
         const completion = await groq.chat.completions.create({
             messages: [
                 {
@@ -52,6 +56,11 @@ export const chatMessage = async (req, res) => {
     }
 
     try {
+        const groq = getGroqClient();
+        if (!groq) {
+            return res.json({ reply: "Lo siento, mis neuronas de silicio no están conectadas (Falta API Key)." });
+        }
+
         // Preparar historial para contexto (limitar a últimos 6 mensajes para ahorrar tokens)
         const contextMessages = history ? history.slice(-6).map(msg => ({
             role: msg.sender === 'user' ? 'user' : 'assistant',
