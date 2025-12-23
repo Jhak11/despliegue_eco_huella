@@ -1,12 +1,10 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stage, Stars } from '@react-three/drei';
-import axios from 'axios';
-import GoleminoModel from '../components/GoleminoModel';
-import ARViewer from '../components/ARViewer';
-import './Pet.css';
+import api from '../services/api';
 
-const API_URL = 'http://localhost:3000/api';
+// Remove hardcoded API_URL since we use the axios instance from api.js
+// const API_URL = 'http://localhost:3000/api';
 
 export default function Pet() {
     const [goleminoData, setGoleminoData] = useState(null);
@@ -22,10 +20,7 @@ export default function Pet() {
 
     const loadGoleminoStatus = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/golemino/status`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.get('/golemino/status');
             setGoleminoData(response.data);
             setLoading(false);
         } catch (error) {
@@ -37,10 +32,7 @@ export default function Pet() {
     const handleAction = async (action) => {
         setActionLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post(`${API_URL}/golemino/${action}`, {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.post(`/golemino/${action}`);
             showMessage(response.data.message, 'success');
             loadGoleminoStatus();
         } catch (error) {
@@ -53,10 +45,7 @@ export default function Pet() {
     const handleEvolve = async () => {
         setActionLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post(`${API_URL}/golemino/evolve`, {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.post('/golemino/evolve');
             showMessage(response.data.message, 'success');
             setShowEvolutionModal(false);
             loadGoleminoStatus();
