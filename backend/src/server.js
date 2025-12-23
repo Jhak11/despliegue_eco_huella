@@ -41,18 +41,28 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Algo salió mal en el servidor' });
 });
 
-// Start server
-const startServer = async () => {
-    try {
+// Initialize database connection (for Vercel serverless)
+let dbInitialized = false;
+const ensureDbInitialized = async () => {
+    if (!dbInitialized) {
         await initializeDatabase();
-        app.listen(PORT, '0.0.0.0', () => {
-            console.log(` Carbon Footprint API running on http://0.0.0.0:${PORT}`);
-            console.log(` Health check: http://0.0.0.0:${PORT}/api/health`);
-        });
-    } catch (error) {
-        console.error('Failed to start server:', error);
-        process.exit(1);
+        dbInitialized = true;
     }
 };
 
-startServer();
+// For Vercel serverless functions
+app.use(async (req, res, next) => {
+    await ensureDbInitialized();
+    next();
+});
+
+// Export for Vercel serverless
+export default app;
+
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`🌱 Carbon Footprint API running on http://0.0.0.0:${PORT}`);
+        console.log(`✅ Health check: http://0.0.0.0:${PORT}/api/health`);
+    });
+}
