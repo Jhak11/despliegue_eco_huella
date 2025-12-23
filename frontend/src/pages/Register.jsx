@@ -48,16 +48,22 @@ export default function Register() {
             });
             navigate('/dashboard');
         } catch (err) {
-            if (err.response?.status !== 409) {
-                console.error('Register error:', err);
-            }
+            console.error('Register error details:', err.response?.data || err.message);
 
             if (err.message === 'Network Error') {
                 setError('No se pudo conectar con el servidor. Verifica tu conexión.');
             } else if (err.response?.status === 409) {
                 setError('Este correo ya está registrado.');
             } else {
-                setError(err.response?.data?.error || 'Error al registrar usuario. Inténtalo de nuevo.');
+                // Safely extract error message
+                const errorMsg = err.response?.data?.error;
+                if (typeof errorMsg === 'string') {
+                    setError(errorMsg);
+                } else if (typeof errorMsg === 'object') {
+                    setError(JSON.stringify(errorMsg));
+                } else {
+                    setError('Error al registrar usuario. Inténtalo de nuevo.');
+                }
             }
         } finally {
             setLoading(false);
