@@ -3,6 +3,9 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stage, Stars } from '@react-three/drei';
 import api from '../services/api';
 
+// Usar React.lazy para GoleminoModel para evitar ReferenceError en producción y reducir bundle inicial
+const GoleminoModel = React.lazy(() => import('../components/GoleminoModel'));
+import ARViewer from '../components/ARViewer';
 // Remove hardcoded API_URL since we use the axios instance from api.js
 // const API_URL = 'http://localhost:3000/api';
 
