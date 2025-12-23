@@ -1,0 +1,466 @@
+/* Pet.css - Sanctuary View */
+.pet-container {
+    position: relative;
+    width: 100%;
+    height: 85vh;
+    /* Occupy most of screen */
+    background: radial-gradient(circle at center, #1a2a3a 0%, #0f1419 100%);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 255, 135, 0.2);
+}
+
+.loading-spinner,
+.error-message {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    color: var(--color-neon-green);
+    font-size: 1.5rem;
+}
+
+/* 3D Viewer Layer */
+.viewer-3d-container {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+/* HUD Overlay Layer */
+.pet-hud-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+    /* Allow clicking through to 3D model where empty */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--spacing-lg);
+}
+
+/* Header HUD */
+.pet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: auto;
+}
+
+.pet-title-block h1 {
+    font-size: 2rem;
+    margin: 0;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.phase-badge {
+    font-size: 1rem;
+    background: rgba(255, 215, 0, 0.2);
+    color: var(--color-gold);
+    border: 1px solid var(--color-gold);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+}
+
+.pet-status-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.status-badge {
+    padding: 6px 16px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9rem;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-healthy {
+    background: rgba(0, 255, 135, 0.2);
+    color: var(--color-neon-green);
+    border: 1px solid var(--color-neon-green);
+}
+
+.status-sick_mild {
+    background: rgba(255, 152, 0, 0.2);
+    color: var(--color-warning);
+    border: 1px solid var(--color-warning);
+}
+
+.status-sick_critical {
+    background: rgba(244, 67, 54, 0.2);
+    color: var(--color-alert);
+    border: 1px solid var(--color-alert);
+    animation: pulse 1s infinite;
+}
+
+/* Stats HUD (Health Organic Blob) */
+.health-container {
+    pointer-events: auto;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.health-blob-wrapper {
+    position: relative;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    backdrop-filter: blur(4px);
+}
+
+.health-fill {
+    height: 100%;
+    background: var(--color-neon-green);
+    border-radius: var(--radius-full);
+    position: relative;
+    transition: width 0.5s ease-out, background-color 0.3s;
+    box-shadow: 0 0 15px var(--color-neon-green);
+}
+
+.health-fill.critical {
+    background: var(--color-alert);
+    box-shadow: 0 0 15px var(--color-alert);
+}
+
+.health-fill.warning {
+    background: var(--color-warning);
+    box-shadow: 0 0 15px var(--color-warning);
+}
+
+/* Pulse animation for health */
+.health-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer 2s infinite;
+}
+
+.health-text {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--color-white);
+    z-index: 2;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+/* Lifetime Badge */
+.lifetime-badge {
+    background: rgba(0, 217, 255, 0.1);
+    border: 1px solid rgba(0, 217, 255, 0.3);
+    color: var(--color-cyan);
+    padding: 6px 16px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(4px);
+    width: fit-content;
+    align-self: flex-end;
+}
+
+/* Footer HUD (Actions) */
+.pet-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    pointer-events: none;
+    /* Let clicks pass through empty space */
+}
+
+.footer-left-group {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.wallet-badge {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    padding: 10px 20px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-gold);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-gold);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1.2rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    width: fit-content;
+}
+
+/* Evolution Progress Bar */
+.evolution-progress-container {
+    width: 250px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.evo-progress-label {
+    font-size: 0.8rem;
+    color: var(--color-gold);
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.evo-progress-track {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.evo-progress-fill {
+    height: 100%;
+    background: var(--gradient-gold);
+    box-shadow: 0 0 10px var(--color-gold);
+    transition: width 0.5s ease-out;
+}
+
+.evo-complete-text {
+    font-size: 0.8rem;
+    color: var(--color-neon-green);
+    text-align: center;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.actions-grid {
+    pointer-events: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+    background: rgba(15, 20, 25, 0.7);
+    backdrop-filter: blur(16px);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-action:hover {
+    background: rgba(0, 255, 135, 0.2);
+    border-color: var(--color-neon-green);
+    transform: translateY(-2px);
+}
+
+.btn-action:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.action-icon {
+    font-size: 1.8rem;
+    margin-bottom: 4px;
+}
+
+.action-label {
+    font-size: 0.7rem;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+}
+
+.btn-evo {
+    grid-column: span 2;
+    background: var(--gradient-gold);
+    color: var(--text-dark);
+    height: 40px;
+    font-weight: 700;
+    border: none;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+/* AR Mode Button */
+.ar-toggle {
+    pointer-events: auto;
+    position: absolute;
+    top: var(--spacing-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--color-cyan);
+    color: var(--color-cyan);
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-display);
+    cursor: pointer;
+    z-index: 20;
+    transition: all 0.3s;
+}
+
+.ar-toggle:hover {
+    background: var(--color-cyan);
+    color: var(--text-dark);
+    box-shadow: 0 0 15px var(--color-cyan);
+}
+
+/* Modals & Toasts */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content.evolution-modal {
+    background: linear-gradient(135deg, var(--color-deep-forest), var(--bg-dark));
+    border: 2px solid var(--color-gold);
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
+    text-align: center;
+}
+
+.evolution-cost {
+    font-size: 1.2rem;
+    color: var(--color-gold);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    margin: var(--spacing-md) 0;
+}
+
+.message-toast {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(10, 20, 30, 0.9);
+    border: 1px solid var(--color-neon-green);
+    padding: 12px 24px;
+    border-radius: var(--radius-full);
+    color: var(--color-neon-green);
+    font-family: var(--font-display);
+    box-shadow: 0 0 20px rgba(0, 255, 135, 0.3);
+    z-index: 50;
+    animation: fadeIn 0.3s;
+}
+
+.message-toast.error {
+    border-color: var(--color-alert);
+    color: var(--color-alert);
+    box-shadow: 0 0 20px rgba(255, 59, 92, 0.3);
+}
+
+/* Particles */
+.particle-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    animation: floatUp 3s infinite linear;
+    opacity: 0;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(100vh) scale(0.5);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .pet-container {
+        height: 80vh;
+        border-radius: 0;
+    }
+
+    .pet-hud-overlay {
+        padding: var(--spacing-sm);
+    }
+
+    .actions-grid {
+        grid-template-columns: repeat(4, 1fr);
+        width: 100%;
+        gap: 4px;
+    }
+
+    .btn-action {
+        width: auto;
+        height: 60px;
+    }
+
+    .btn-evo {
+        grid-column: span 4;
+    }
+
+    .pet-footer {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .footer-left-group,
+    .wallet-badge {
+        align-self: flex-start;
+    }
+}

@@ -1,0 +1,54 @@
+.reward-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) !important;
+    background: white;
+    padding: 15px 25px;
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    border: 2px solid #FFD700;
+}
+
+.reward-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.reward-icon {
+    font-size: 2rem;
+}
+
+.reward-text h4 {
+    margin: 0;
+    color: #333;
+    font-size: 1rem;
+}
+
+.reward-values {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.xp-tag,
+.brotos-tag {
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.xp-tag {
+    background: #e3f2fd;
+    color: #2196F3;
+}
+
+.brotos-tag {
+    background: #fff3e0;
+    color: #FF9800;
+}
